@@ -9,6 +9,7 @@ namespace Core.DTOS
 {
     public class BookingDataDisplayUser
     {
+        public int Id { get; set; }
         public string Image {  get; set; }
         public string DoctorName { get; set; }
 

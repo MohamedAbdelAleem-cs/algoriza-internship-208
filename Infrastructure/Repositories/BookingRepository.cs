@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -118,6 +119,22 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<Bookings>> GetBookingsOfDoctorAsync(int DocId)
         {
             return await _Context.Bookings.Where(B=>B.DoctorId==DocId).ToListAsync();
+        }
+
+        public async Task<bool> CancelBooking(int Id, string UserId)
+        {
+            var BookingToChange = await _Context.Bookings.FirstOrDefaultAsync(B => (B.Id == Id) && (B.patientId == UserId));
+            if (BookingToChange == null)
+            {
+                return false;
+            }
+            if(BookingToChange.Status==BookingStatus.Confirmed||BookingToChange.Status==BookingStatus.completed)
+            {
+                return false;
+            }
+            BookingToChange.Status = BookingStatus.cancelled;
+            var affected = await _Context.SaveChangesAsync();
+            return affected > 0;
         }
     }
 }

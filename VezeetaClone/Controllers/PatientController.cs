@@ -46,5 +46,13 @@ namespace VezeetaCloneWeb.Controllers
             var res = await _bookingService.GetBookingsOfUserAsync(CurrentUser.Id);
             return Ok(res);
         }
+
+        [HttpPatch("CancelBooking/{Id:int}")]
+        public async Task<IActionResult> CancelBookingAync(int Id)
+        {
+            var CurrentUser = await _userService.GetCurrentUserAsync(User);
+            var res = await _bookingService.CancelBookingUser(Id, CurrentUser.Id);
+            return Ok(res);
+        }
     }
 }

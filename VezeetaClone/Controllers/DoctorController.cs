@@ -33,7 +33,7 @@ namespace VezeetaCloneWeb.Controllers
             return Ok(res);
         }
 
-        [HttpPost("ConfirmBooking/{id:int}")]
+        [HttpPatch("ConfirmBooking/{id:int}")]
         public async Task<IActionResult> ConfirmBooking([FromRoute]int id)
         {
             var CurrentUser = await _userService.GetCurrentUserAsync(User);
@@ -41,7 +41,7 @@ namespace VezeetaCloneWeb.Controllers
             return Ok(res);
         }
 
-        [HttpPost("CompleteBooking/{id:int}")]
+        [HttpPatch("CompleteBooking/{id:int}")]
         public async Task<IActionResult> CompleteBooking([FromRoute]int id)
         {
             var CurrentUser = await _userService.GetCurrentUserAsync(User);

@@ -50,6 +50,7 @@ namespace Service
                 var doctorUserDetails = await _userManager.FindByIdAsync(doctor.UserId);
                 result.Add(new BookingDataDisplayUser
                 {
+                    Id=booking.Id,
                     DoctorName=$"{doctorUserDetails.FirstName} {doctorUserDetails.LastName}",
                     Image=doctorUserDetails.Image,
                     DayOfWeek= booking.Day,
@@ -111,6 +112,9 @@ namespace Service
             return res;
         }
 
-
+        public async Task<bool> CancelBookingUser(int Id, string UserId)
+        {
+            return await _bookingRepository.CancelBooking(Id, UserId);
+        }
     }
 }

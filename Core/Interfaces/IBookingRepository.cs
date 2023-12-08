@@ -18,6 +18,7 @@ namespace Core.Interfaces
         public Task<IEnumerable<Bookings>> GetBookingsOfDoctorAsync(int DocId);
 
         public Task<bool> ChangeBookingStatus(int Id, int DocId, BookingStatus Status);
+        public Task<bool> CancelBooking(int Id, string UserId);
 
     }
 }

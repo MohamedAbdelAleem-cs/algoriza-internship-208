@@ -17,6 +17,8 @@ namespace Service.Interfaces
         public Task<IEnumerable<BookingDataDisplayUser>> GetBookingsOfUserAsync(string UserId);
         public Task<IEnumerable<BookingDataDisplayDoctor>> GetBookingsOfDoctorAsync(string  UserId);
         public Task<bool> ChangeBookingStatus(int Id,string UserId, BookingStatus Status);
+
+        public Task<bool> CancelBookingUser(int Id,string UserId);
         public Task<NumberOfBookings> GetNumberOfBookings();
 
     }
