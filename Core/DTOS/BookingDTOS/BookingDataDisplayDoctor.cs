@@ -10,11 +10,15 @@ namespace Core.DTOS.BookingDTOS
 {
     public class BookingDataDisplayDoctor
     {
+        public int Id { get; set; }
         public string PatientName { get; set; }
         public string Image {  get; set; }
         public int age { get; set; }
         public Gender Gender { get; set; }
         public string Phone {  get; set; }
         public string Email { get; set; }
+
+        public DayOfWeek DayOfWeek { get; set; }
+        public String Time {  get; set; }
     }
 }

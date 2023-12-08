@@ -1,6 +1,7 @@
 ﻿using Core.Const;
 using Core.DTOS.AdminDTOS;
 using Core.DTOS.DoctorDTO;
+using Core.DTOS.PatientDTOS;
 using Core.Interfaces;
 using Core.Models;
 using Microsoft.AspNetCore.Identity;
@@ -20,12 +21,13 @@ namespace Service
         private readonly IDoctorRepository _DoctorRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IDiscountRepository _discountRepository;
-
-        public AdminService(IDoctorRepository doctorRepository, UserManager<ApplicationUser> userManager, IDiscountRepository discountRepository)
+        private readonly IBookingService _bookingService;
+        public AdminService(IDoctorRepository doctorRepository, UserManager<ApplicationUser> userManager, IDiscountRepository discountRepository, IBookingService bookingService)
         {
             _DoctorRepository = doctorRepository;
             _userManager = userManager;
             _discountRepository = discountRepository;
+            _bookingService = bookingService;
         }
 
         #region Dashboard
@@ -197,15 +199,45 @@ namespace Service
         #endregion
 
         #region Admin-Patient Services
-        public async Task<IEnumerable<ApplicationUser>> GetAllUsersAsync()
+        public async Task<IEnumerable<DisplayPatientAdmin>> GetAllUsersAsync()
         {
-           return await _userManager.GetUsersForClaimAsync(new Claim("AccountType", AccountType.Patient.ToString()));
+           var Users= await _userManager.GetUsersForClaimAsync(new Claim("AccountType", AccountType.Patient.ToString()));
+           List<DisplayPatientAdmin> res= new List<DisplayPatientAdmin>();
+           foreach(var user in Users)
+            {
+                var bookings = (await _bookingService.GetBookingsOfUserAsync(user.Id)).ToList();
+                res.Add(new DisplayPatientAdmin
+                {
+                    FullName = $"{user.FirstName} {user.LastName}",
+                    Email=user.Email,
+                    DateOfBirth=user.DateOfBirth,
+                    Gender=user.Gender,
+                    Image= user.Image ,
+                    PhoneNumber=user.PhoneNumber,
+                    BookingData=bookings
+                });
+            }
+            return res;
         }
 
-        public async Task<ApplicationUser> GetUserByIdAsync(string userId)
+        public async Task<DisplayPatientAdmin> GetUserByIdAsync(string userId)
         {
 
-            return await _userManager.FindByIdAsync(userId);
+            var user= await _userManager.FindByIdAsync(userId);
+
+            var bookings = (await _bookingService.GetBookingsOfUserAsync(user.Id)).ToList();
+
+            var res = new DisplayPatientAdmin
+            {
+                FullName = $"{user.FirstName} {user.LastName}",
+                Email = user.Email,
+                DateOfBirth = user.DateOfBirth,
+                Gender = user.Gender,
+                Image = user.Image,
+                PhoneNumber = user.PhoneNumber,
+                BookingData = bookings
+            };
+            return res;
         }
 
 

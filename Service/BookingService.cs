@@ -82,12 +82,15 @@ namespace Service
                var Patient = await _userManager.FindByIdAsync(booking.patientId);
                 result.Add( new BookingDataDisplayDoctor
                 {
+                    Id=booking.Id,
                     Email = Patient.Email,
                     Gender = Patient.Gender,
                     Phone = Patient.PhoneNumber,
                     Image = Patient.Image,
                     PatientName = $"{Patient.FirstName} {Patient.LastName}",
-                    age = HelperFunctions.CalculateAge(Patient.DateOfBirth)
+                    age = HelperFunctions.CalculateAge(Patient.DateOfBirth),
+                    DayOfWeek=booking.Day,
+                    Time=booking.Time,
                 });
             }
 

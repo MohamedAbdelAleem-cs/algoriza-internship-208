@@ -1,5 +1,6 @@
 ﻿using Core.DTOS.AdminDTOS;
 using Core.DTOS.DoctorDTO;
+using Core.DTOS.PatientDTOS;
 using Core.Interfaces;
 using Core.Models;
 using System;
@@ -14,8 +15,8 @@ namespace Service.Interfaces
     {
 
         
-        Task<IEnumerable<ApplicationUser>> GetAllUsersAsync();
-        Task<ApplicationUser> GetUserByIdAsync(string userId);
+        Task<IEnumerable<DisplayPatientAdmin>> GetAllUsersAsync();
+        Task<DisplayPatientAdmin> GetUserByIdAsync(string userId);
         Task<IEnumerable<Doctor>> GetAllDoctorsAsync();
         Task<Doctor> GetDoctorByIdAsync(int doctorId);
 
