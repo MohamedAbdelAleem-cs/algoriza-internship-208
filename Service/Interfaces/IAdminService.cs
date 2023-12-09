@@ -1,5 +1,6 @@
 ﻿using Core.DTOS.AdminDTOS;
 using Core.DTOS.DoctorDTO;
+using Core.DTOS.DoctorDTOS;
 using Core.DTOS.PatientDTOS;
 using Core.Interfaces;
 using Core.Models;
@@ -17,8 +18,8 @@ namespace Service.Interfaces
         
         Task<IEnumerable<DisplayPatientAdmin>> GetAllUsersAsync();
         Task<DisplayPatientAdmin> GetUserByIdAsync(string userId);
-        Task<IEnumerable<Doctor>> GetAllDoctorsAsync();
-        Task<Doctor> GetDoctorByIdAsync(int doctorId);
+        Task<IEnumerable<DoctorDisplayAdmin>> GetAllDoctorsAsync();
+        Task<DoctorDisplayAdmin> GetDoctorByIdAsync(int doctorId);
 
         Task<bool> AddDoctorAsync(DoctorDetailsCreate Doctor);
         Task<bool> UpdateDoctorAsync(DoctorDetailsEdit doctor,int doctorId);

@@ -1,4 +1,7 @@
 ﻿using Core.DTOS;
+using Core.DTOS.DoctorDTO;
+using Core.DTOS.DoctorDTOS;
+using Core.Helper_Functions;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -36,7 +39,13 @@ namespace VezeetaCloneWeb.Controllers
         public async Task<IActionResult> GetAllDoctorsAsync()
         {
             var res=await _patientService.GetAllDoctorsAsync();
-            return Ok(res);
+            string projectRoot = Directory.GetCurrentDirectory();
+            IEnumerable<DoctorDisplay> modifiedRes = res.Select(D =>
+            {
+                D.Image = HelperFunctions.AddFullImagePath(projectRoot, D.Image);
+                return D;
+            });
+            return Ok(modifiedRes);
         }
 
         [HttpGet("GetBookings")]
@@ -44,7 +53,13 @@ namespace VezeetaCloneWeb.Controllers
         {
             var CurrentUser=await _userService.GetCurrentUserAsync(User);
             var res = await _bookingService.GetBookingsOfUserAsync(CurrentUser.Id);
-            return Ok(res);
+            string projectRoot = Directory.GetCurrentDirectory();
+            IEnumerable<BookingDataDisplayUser> modifiedRes = res.Select(B =>
+            {
+                B.Image = HelperFunctions.AddFullImagePath(projectRoot, B.Image);
+                return B;
+            });
+            return Ok(modifiedRes);
         }
 
         [HttpPatch("CancelBooking/{Id:int}")]

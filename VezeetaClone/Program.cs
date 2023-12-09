@@ -1,12 +1,15 @@
+using Castle.Core.Smtp;
 using Core.Authorization;
 using Core.Interfaces;
 using Core.Models;
+using Core.Smtp;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Protocols;
 using Service;
 using Service.Interfaces;
 
@@ -51,6 +54,10 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IPatientService,PatientService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+
+
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddIdentity<ApplicationUser,IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<IAuthorizationHandler, AccountTypeHandler>();
 

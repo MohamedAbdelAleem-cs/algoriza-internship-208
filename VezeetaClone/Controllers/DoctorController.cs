@@ -25,6 +25,7 @@ namespace VezeetaCloneWeb.Controllers
             _doctorService = doctorService;
         }
 
+        #region Booking Related
         [HttpGet("GetBookings")]
         public async Task<IActionResult> GetDoctorBookings()
         {
@@ -34,7 +35,7 @@ namespace VezeetaCloneWeb.Controllers
         }
 
         [HttpPatch("ConfirmBooking/{id:int}")]
-        public async Task<IActionResult> ConfirmBooking([FromRoute]int id)
+        public async Task<IActionResult> ConfirmBooking([FromRoute] int id)
         {
             var CurrentUser = await _userService.GetCurrentUserAsync(User);
             var res = await _bookingService.ChangeBookingStatus(id, CurrentUser.Id, BookingStatus.Confirmed);
@@ -42,18 +43,21 @@ namespace VezeetaCloneWeb.Controllers
         }
 
         [HttpPatch("CompleteBooking/{id:int}")]
-        public async Task<IActionResult> CompleteBooking([FromRoute]int id)
+        public async Task<IActionResult> CompleteBooking([FromRoute] int id)
         {
             var CurrentUser = await _userService.GetCurrentUserAsync(User);
             var res = await _bookingService.ChangeBookingStatus(id, CurrentUser.Id, BookingStatus.completed);
             return Ok(res);
-        }
+        } 
+        #endregion
+
+        #region Appointment Related
 
         [HttpPost("AddAppointments")]
         public async Task<IActionResult> AddAppointmentsAsync(AppointmentDataAdd appointmentData)
         {
             var CurrentUser = await _userService.GetCurrentUserAsync(User);
-            if(appointmentData.DayOfWeeks.Count!=appointmentData.TimesList.Count)
+            if (appointmentData.DayOfWeeks.Count != appointmentData.TimesList.Count)
             {
                 return Ok(false);
             }
@@ -66,7 +70,7 @@ namespace VezeetaCloneWeb.Controllers
         {
             var CurrentUser = await _userService.GetCurrentUserAsync(User);
 
-            var res=await _doctorService.UpdateTime(update.DayOfWeek,update.oldTime,update.newTime,CurrentUser.Id);
+            var res = await _doctorService.UpdateTime(update.DayOfWeek, update.oldTime, update.newTime, CurrentUser.Id);
             return Ok(res);
         }
 
@@ -76,7 +80,8 @@ namespace VezeetaCloneWeb.Controllers
             var CurrentUser = await _userService.GetCurrentUserAsync(User);
             var res = await _doctorService.DeleteTime(delete.Day, delete.Time, CurrentUser.Id);
             return Ok(res);
-        }
+        } 
+        #endregion
 
     }
 }

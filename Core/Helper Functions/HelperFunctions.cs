@@ -23,7 +23,54 @@ namespace Core.Helper_Functions
             return age;
         }
 
+        public static string AddFullImagePath(string projectRoot,string imagePath)
+        {
+            if (imagePath == null)
 
+            {
+                return null;
+            }
+
+            string uploadsFolder = Path.Combine(projectRoot, "images");
+            string filePath = Path.Combine(uploadsFolder, imagePath);
+            return filePath;
+        }
+
+        public static string ProcessUploadedFile(string imgPath)
+        {
+            string uniqueFileName = null;
+
+            if (imgPath != null && System.IO.File.Exists(imgPath))
+            {
+                string projectRoot = Directory.GetCurrentDirectory();
+                string uploadsFolder = Path.Combine(projectRoot, "images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(imgPath);
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                // Check if the directory exists, if not, create it
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                System.IO.File.Copy(imgPath, filePath); // Copy the file to the target location
+
+
+
+            }
+
+
+
+            return uniqueFileName;
+        }
+
+        public static void UndoUploadedFile(string filePath)
+        {
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath); // Delete the file
+            }
+        }
 
     }
 }

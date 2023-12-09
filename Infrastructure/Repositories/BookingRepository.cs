@@ -38,8 +38,15 @@ namespace Infrastructure.Repositories
 
 
                 if (AvailableDiscount != null) {
+                    var DiscountAlreadyUsed = _Context.Bookings.Any(B => B.patientId == PatientId
+                    && (B.Status == BookingStatus.pending || B.Status == BookingStatus.Confirmed) 
+                    && B.DiscountCode == AvailableDiscount.DiscountCode);
 
-                    if (AvailableDiscount.DiscountType == DiscountType.Value)
+                    if (DiscountAlreadyUsed)
+                    {
+                        AvailableDiscount = null;
+                    }
+                    else if (AvailableDiscount.DiscountType == DiscountType.Value)
                     {
                         FinalPrice = doctor.Price - AvailableDiscount.Value;
                         if(FinalPrice < 0)

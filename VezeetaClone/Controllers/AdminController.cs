@@ -1,6 +1,9 @@
 ﻿using Core.Const;
 using Core.DTOS.AdminDTOS;
 using Core.DTOS.DoctorDTO;
+using Core.DTOS.DoctorDTOS;
+using Core.DTOS.PatientDTOS;
+using Core.Helper_Functions;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +19,6 @@ namespace VezeetaCloneWeb.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        //private readonly IDoctorRepository _DoctorRepository;
         private readonly IAdminService _AdminService;
         private readonly IBookingService _BookingService;
 
@@ -69,17 +71,25 @@ namespace VezeetaCloneWeb.Controllers
         public async Task<IActionResult> GetAllAsync()
         {
             var res = await _AdminService.GetAllDoctorsAsync();
-            return Ok(res);
+            string projectRoot = Directory.GetCurrentDirectory();
+            IEnumerable <DoctorDisplayAdmin> modifiedRes = res.Select(D =>
+            {
+                D.Image = HelperFunctions.AddFullImagePath(projectRoot,D.Image);
+                return D;
+            });
+            return Ok(modifiedRes);
         }
 
         [HttpGet("Doctor/{id:int}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
             var res = await _AdminService.GetDoctorByIdAsync(id);
-            if(res == null)
+            string projectRoot = Directory.GetCurrentDirectory();
+            if (res == null)
             {
                 return NotFound();
             }
+            res.Image = HelperFunctions.AddFullImagePath(projectRoot, res.Image);
             return Ok(res);
         }
 
@@ -88,7 +98,7 @@ namespace VezeetaCloneWeb.Controllers
         {
 
 
-            string ImgPath = ProcessUploadedFile(doctor.Image);
+            string ImgPath = HelperFunctions.ProcessUploadedFile(doctor.Image);
             doctor.Image = ImgPath;
             if(ImgPath == null)
             {
@@ -97,12 +107,12 @@ namespace VezeetaCloneWeb.Controllers
             var res = await _AdminService.AddDoctorAsync(doctor);
             if (!res)
             {
-                UndoUploadedFile(ImgPath);
+                HelperFunctions.UndoUploadedFile(ImgPath);
             }
             return Ok(res);
         }
 
-        [HttpDelete("Doctor")]
+        [HttpDelete("Doctor/{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var res = await _AdminService.DeleteDoctorAsync(id);
@@ -123,13 +133,28 @@ namespace VezeetaCloneWeb.Controllers
         public async Task<IActionResult> GetAllPatientsAsync()
         {
             var res = await _AdminService.GetAllUsersAsync();
-            return Ok(res);
+            string projectRoot = Directory.GetCurrentDirectory();
+            IEnumerable<DisplayPatientAdmin> modifiedRes = res.Select(patient =>
+            {
+                patient.Image = HelperFunctions.AddFullImagePath(projectRoot, patient.Image);
+
+                patient.BookingData = patient.BookingData.Select(bookingData =>
+                {
+                    bookingData.Image = HelperFunctions.AddFullImagePath(projectRoot, bookingData.Image);
+                    return bookingData;
+                }).ToList();
+
+                return patient;
+            });
+            return Ok(modifiedRes);
         }
 
         [HttpGet("Patient/{id}")]
         public async Task<IActionResult> GetPatientByIdAsync(string id)
         {
             var res = await _AdminService.GetUserByIdAsync(id);
+            string projectRoot = Directory.GetCurrentDirectory();
+            res.Image=HelperFunctions.AddFullImagePath(projectRoot, res.Image);
             if (res == null)
             {
                 return NotFound();
@@ -157,7 +182,7 @@ namespace VezeetaCloneWeb.Controllers
             var res = await _AdminService.DeleteDiscountAsync(Id);
             return Ok(res);
         }
-        [HttpPost("Discounts/Deactivate/{Id:int}")]
+        [HttpPatch("Discounts/Deactivate/{Id:int}")]
         public async Task<IActionResult> DeactivateDiscount([FromRoute] int Id)
         {
             var res = await _AdminService.DeactivateDiscountAsync(Id);
@@ -167,40 +192,6 @@ namespace VezeetaCloneWeb.Controllers
 
 
 
-        private string ProcessUploadedFile(string imgPath)
-        {
-            string uniqueFileName = null;
-
-            if (imgPath != null && System.IO.File.Exists(imgPath))
-            {
-                string projectRoot = Directory.GetCurrentDirectory();
-                string uploadsFolder = Path.Combine(projectRoot, "images");
-                uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(imgPath);
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                // Check if the directory exists, if not, create it
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                System.IO.File.Copy(imgPath, filePath); // Copy the file to the target location
-
-
-
-            }
-
-
-
-            return uniqueFileName;
-        }
-
-        private void UndoUploadedFile(string filePath)
-        {
-            if (System.IO.File.Exists(filePath))
-            {
-                System.IO.File.Delete(filePath); // Delete the file
-            }
-        }
+        
     }
 }

@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "G9/smoPdTM4f3DbirH8nDfJqP3rL8eNz8yDc5RJJOA/3fQzX1ZsrgXUnocwHgzlRPU5zoY8EJeTdcHfZoOa9bg==",
+  "dgSpecHash": "T092cbF7zXvGLl/mV2myG5A5Il8BE3bHCWO39F5ZKwF4SKIF5SPC5ThiWXjh5OUH2vyYF37oYraW8EoQDSHDkg==",
   "success": true,
   "projectFilePath": "C:\\Users\\moham\\OneDrive\\Documents\\C#\\Algoriza\\Project\\VezeetaClone\\VezeetaClone\\VezeetaCloneWeb.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\moham\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\moham\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\moham\\.nuget\\packages\\microsoft.aspnetcore.authorization\\6.0.25\\microsoft.aspnetcore.authorization.6.0.25.nupkg.sha512",
     "C:\\Users\\moham\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\6.0.25\\microsoft.aspnetcore.cryptography.internal.6.0.25.nupkg.sha512",
@@ -51,6 +52,7 @@
     "C:\\Users\\moham\\.nuget\\packages\\system.collections.immutable\\6.0.0\\system.collections.immutable.6.0.0.nupkg.sha512",
     "C:\\Users\\moham\\.nuget\\packages\\system.configuration.configurationmanager\\4.7.0\\system.configuration.configurationmanager.4.7.0.nupkg.sha512",
     "C:\\Users\\moham\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.1\\system.diagnostics.diagnosticsource.6.0.1.nupkg.sha512",
+    "C:\\Users\\moham\\.nuget\\packages\\system.diagnostics.eventlog\\6.0.0\\system.diagnostics.eventlog.6.0.0.nupkg.sha512",
     "C:\\Users\\moham\\.nuget\\packages\\system.drawing.common\\4.7.0\\system.drawing.common.4.7.0.nupkg.sha512",
     "C:\\Users\\moham\\.nuget\\packages\\system.identitymodel.tokens.jwt\\6.8.0\\system.identitymodel.tokens.jwt.6.8.0.nupkg.sha512",
     "C:\\Users\\moham\\.nuget\\packages\\system.runtime.caching\\4.7.0\\system.runtime.caching.4.7.0.nupkg.sha512",

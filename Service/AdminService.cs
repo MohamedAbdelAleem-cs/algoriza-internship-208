@@ -1,6 +1,8 @@
-﻿using Core.Const;
+﻿using Castle.Core.Smtp;
+using Core.Const;
 using Core.DTOS.AdminDTOS;
 using Core.DTOS.DoctorDTO;
+using Core.DTOS.DoctorDTOS;
 using Core.DTOS.PatientDTOS;
 using Core.Interfaces;
 using Core.Models;
@@ -22,12 +24,15 @@ namespace Service
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IDiscountRepository _discountRepository;
         private readonly IBookingService _bookingService;
-        public AdminService(IDoctorRepository doctorRepository, UserManager<ApplicationUser> userManager, IDiscountRepository discountRepository, IBookingService bookingService)
+        private readonly IEmailService _emailService;
+        public AdminService(IDoctorRepository doctorRepository, UserManager<ApplicationUser> userManager, 
+            IDiscountRepository discountRepository, IBookingService bookingService, IEmailService emailService)
         {
             _DoctorRepository = doctorRepository;
             _userManager = userManager;
             _discountRepository = discountRepository;
             _bookingService = bookingService;
+            _emailService = emailService;
         }
 
         #region Dashboard
@@ -85,16 +90,46 @@ namespace Service
 
         #region Admin-Doctor Services
 
-        public async Task<IEnumerable<Doctor>> GetAllDoctorsAsync()
+        public async Task<IEnumerable<DoctorDisplayAdmin>> GetAllDoctorsAsync()
         {
             var res = await _DoctorRepository.GetAllAsync();
-            return res;
+            var finalRes=new List<DoctorDisplayAdmin>();
+            foreach(var d in res)
+            {
+                var user = await _userManager.FindByIdAsync(d.UserId);
+                finalRes.Add(new DoctorDisplayAdmin
+                {
+                    DateOfBirth = user.DateOfBirth,
+                    Email = user.Email,
+                    FullName = $"{user.FirstName} {user.LastName}",
+                    Gender = user.Gender,
+                    Id = d.Id,
+                    Image = user.Image,
+                    Phone = user.PhoneNumber,
+                    Specialization = d.Specialization
+                });
+            }
+
+
+            return finalRes;
         }
 
-        public async Task<Doctor> GetDoctorByIdAsync(int doctorId)
+        public async Task<DoctorDisplayAdmin> GetDoctorByIdAsync(int doctorId)
         {
             var res = await _DoctorRepository.GetByIdAsync(doctorId);
-            return res;
+            var user = await _userManager.FindByIdAsync(res.UserId);
+            DoctorDisplayAdmin finalRes = new DoctorDisplayAdmin
+            {
+                DateOfBirth = user.DateOfBirth,
+                Email = user.Email,
+                FullName = $"{user.FirstName} {user.LastName}",
+                Gender = user.Gender,
+                Id = res.Id,
+                Image = user.Image,
+                Phone = user.PhoneNumber,
+                Specialization = res.Specialization
+            };
+            return finalRes;
         }
         public async Task<bool> AddDoctorAsync(DoctorDetailsCreate Doctor)
         {
@@ -115,10 +150,14 @@ namespace Service
                 };
 
                 var createResult = await _userManager.CreateAsync(newUser, Doctor.Password);
-                var claim = new Claim("AccountType", AccountType.Doctor.ToString());
-                await _userManager.AddClaimAsync(newUser, claim);
+
                 if (createResult.Succeeded)
                 {
+                    var claim = new Claim("AccountType", AccountType.Doctor.ToString());
+                    await _userManager.AddClaimAsync(newUser, claim);
+                    string subject = "Welcome to Our Platform";
+                    string messageBody = $"Dear Doctor, <br><br> Your account has been created. <br><br> Username: {Doctor.Email} <br> Password: {Doctor.Password}";
+                    await _emailService.SendEmailAsync(Doctor.Email, subject, messageBody);
                     var user = await _userManager.FindByEmailAsync(newUser.Email);
 
                     var doctor = new Doctor
@@ -133,13 +172,11 @@ namespace Service
                 }
                 else
                 {
-                    // Handle the case when user creation fails
                     return false;
                 }
             }
             else
             {
-                // Handle the case when the user already exists
                 return false;
             }
         }
@@ -208,6 +245,7 @@ namespace Service
                 var bookings = (await _bookingService.GetBookingsOfUserAsync(user.Id)).ToList();
                 res.Add(new DisplayPatientAdmin
                 {
+                    Id = user.Id,
                     FullName = $"{user.FirstName} {user.LastName}",
                     Email=user.Email,
                     DateOfBirth=user.DateOfBirth,
@@ -243,14 +281,15 @@ namespace Service
 
         #endregion
 
-
+        #region Discount
         public async Task<bool> AddDiscountAsync(AddDiscountData discountData)
         {
             if (discountData.DiscountType == DiscountType.Percentage && discountData.value > 100)
             {
                 return false;
             }
-            Discount discount = new Discount {
+            Discount discount = new Discount
+            {
                 CompletedRequests = discountData.CompletedRequests,
                 DiscountCode = discountData.DiscountCode,
                 DiscountType = discountData.DiscountType,
@@ -269,7 +308,7 @@ namespace Service
             }
             Discount discount = new Discount
             {
-                Id = Id,  
+                Id = Id,
                 CompletedRequests = discountData.CompletedRequests,
                 DiscountCode = discountData.DiscountCode,
                 DiscountType = discountData.DiscountType,
@@ -291,6 +330,7 @@ namespace Service
         {
             var res = await _discountRepository.DeactivateDiscount(Id);
             return res;
-        }
+        } 
+        #endregion
     }
 }

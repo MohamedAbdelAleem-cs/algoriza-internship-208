@@ -46,29 +46,14 @@ namespace VezeetaCloneWeb.Controllers
         public async Task<ActionResult> LoginAsync(LoginData loginData)
         {
             var result = await _SignInManager.PasswordSignInAsync(loginData.Email, loginData.Password, true, false);
-
-            if (result.Succeeded)
+            if(result.Succeeded)
             {
-                var accountType = await _UserService.GetAccountTypeAsync(loginData.Email);
-                //    var claims = new List<Claim>
-                //{
-                //new Claim(ClaimTypes.Email, loginData.Email), // Adding email as a claim
-                //new Claim("AccountType",accountType.ToString())
-                //};
-
-                Claim claim = new Claim("AccountType", accountType.ToString());
-
-                var claimsIdentity = new ClaimsIdentity(new[] { claim }, "AccountType");
-                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-
-                HttpContext.SignInAsync(claimsPrincipal);
-                HttpContext.User.AddIdentity(claimsIdentity);
-
-                return Ok(new { Message = "Logged in successfully", Auth = User.Identity.IsAuthenticated});
+                return Ok(true);
             }
-
-            return Unauthorized(new { Message = "Invalid credentials" });
+            else
+            {
+                return Unauthorized(false);
+            }
         }
 
 

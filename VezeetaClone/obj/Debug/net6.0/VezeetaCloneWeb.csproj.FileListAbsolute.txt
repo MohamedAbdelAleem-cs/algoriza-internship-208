@@ -80,3 +80,4 @@ C:\Users\moham\OneDrive\Documents\C#\Algoriza\Project\VezeetaClone\VezeetaClone\
 C:\Users\moham\OneDrive\Documents\C#\Algoriza\Project\VezeetaClone\VezeetaClone\bin\Debug\net6.0\Microsoft.AspNetCore.Authorization.dll
 C:\Users\moham\OneDrive\Documents\C#\Algoriza\Project\VezeetaClone\VezeetaClone\bin\Debug\net6.0\Microsoft.AspNetCore.Metadata.dll
 C:\Users\moham\OneDrive\Documents\C#\Algoriza\Project\VezeetaClone\VezeetaClone\bin\Debug\net6.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\moham\OneDrive\Documents\C#\Algoriza\Project\VezeetaClone\VezeetaClone\bin\Debug\net6.0\Castle.Core.dll
