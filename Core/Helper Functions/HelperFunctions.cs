@@ -9,6 +9,11 @@ namespace Core.Helper_Functions
 {
     public static class HelperFunctions
     {
+
+        public static List<T> PaginateList<T>(List<T> itemList,int page, int pageSize) where T:class { 
+            return itemList.Skip((page-1)*pageSize).Take(pageSize).ToList();
+                
+        }
         public static int CalculateAge(DateTime dateOfBirth)
         {
             DateTime today = DateTime.Today;

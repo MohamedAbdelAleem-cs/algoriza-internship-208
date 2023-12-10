@@ -8,6 +8,7 @@ using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service;
 using Service.Interfaces;
 using System.Runtime.CompilerServices;
@@ -68,7 +69,7 @@ namespace VezeetaCloneWeb.Controllers
 
         #region Doctor Related Endpoints
         [HttpGet("GetAllDoctors")]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync(int page,int pageSize)
         {
             var res = await _AdminService.GetAllDoctorsAsync();
             string projectRoot = Directory.GetCurrentDirectory();
@@ -77,6 +78,10 @@ namespace VezeetaCloneWeb.Controllers
                 D.Image = HelperFunctions.AddFullImagePath(projectRoot,D.Image);
                 return D;
             });
+            if (page > 0 && pageSize > 0)
+            {
+                modifiedRes = HelperFunctions.PaginateList<DoctorDisplayAdmin>(modifiedRes.ToList(), page, pageSize);
+            }
             return Ok(modifiedRes);
         }
 
@@ -130,7 +135,7 @@ namespace VezeetaCloneWeb.Controllers
 
         #region Patient Related Endpoints
         [HttpGet("GetAllPatients")]
-        public async Task<IActionResult> GetAllPatientsAsync()
+        public async Task<IActionResult> GetAllPatientsAsync(int page,int pageSize)
         {
             var res = await _AdminService.GetAllUsersAsync();
             string projectRoot = Directory.GetCurrentDirectory();
@@ -143,9 +148,13 @@ namespace VezeetaCloneWeb.Controllers
                     bookingData.Image = HelperFunctions.AddFullImagePath(projectRoot, bookingData.Image);
                     return bookingData;
                 }).ToList();
-
                 return patient;
             });
+
+            if (page > 0 && pageSize > 0)
+            {
+                modifiedRes = HelperFunctions.PaginateList<DisplayPatientAdmin>(modifiedRes.ToList(), page, pageSize);
+            }
             return Ok(modifiedRes);
         }
 

@@ -1,4 +1,5 @@
 ﻿using Core.DTOS;
+using Core.DTOS.BookingDTOS;
 using Core.DTOS.DoctorDTO;
 using Core.DTOS.DoctorDTOS;
 using Core.Helper_Functions;
@@ -6,6 +7,7 @@ using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service.Interfaces;
 
 namespace VezeetaCloneWeb.Controllers
@@ -36,7 +38,7 @@ namespace VezeetaCloneWeb.Controllers
         }
 
         [HttpGet("GetDoctors")]
-        public async Task<IActionResult> GetAllDoctorsAsync()
+        public async Task<IActionResult> GetAllDoctorsAsync(int page,int pageSize)
         {
             var res=await _patientService.GetAllDoctorsAsync();
             string projectRoot = Directory.GetCurrentDirectory();
@@ -45,6 +47,11 @@ namespace VezeetaCloneWeb.Controllers
                 D.Image = HelperFunctions.AddFullImagePath(projectRoot, D.Image);
                 return D;
             });
+
+            if (page > 0 && pageSize > 0)
+            {
+                modifiedRes = HelperFunctions.PaginateList<DoctorDisplay>(modifiedRes.ToList(), page, pageSize);
+            }
             return Ok(modifiedRes);
         }
 

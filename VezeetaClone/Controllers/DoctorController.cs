@@ -1,9 +1,13 @@
 ﻿using Core.Const;
 using Core.DTOS;
+using Core.DTOS.BookingDTOS;
+using Core.DTOS.PatientDTOS;
+using Core.Helper_Functions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service.Interfaces;
 
 namespace VezeetaCloneWeb.Controllers
@@ -27,10 +31,14 @@ namespace VezeetaCloneWeb.Controllers
 
         #region Booking Related
         [HttpGet("GetBookings")]
-        public async Task<IActionResult> GetDoctorBookings()
+        public async Task<IActionResult> GetDoctorBookings(int page,int pageSize)
         {
             var CurrentUser = await _userService.GetCurrentUserAsync(User);
             var res = await _bookingService.GetBookingsOfDoctorAsync(CurrentUser.Id);
+            if (page > 0 && pageSize > 0)
+            {
+                res = HelperFunctions.PaginateList<BookingDataDisplayDoctor>(res.ToList(), page, pageSize);
+            }
             return Ok(res);
         }
 
